@@ -1,5 +1,6 @@
 import pytest
 
+from selenium.common.exceptions import UnexpectedAlertPresentException
 
 class TestAfterHooksAdd(object):
     def test_raises_correct_exception_when_not_given_any_arguments(self, browser):
@@ -164,6 +165,8 @@ class TestAfterHooksRun(object):
         finally:
             self.cleanup(browser, hook)
 
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnexpectedAlertPresentException)
     def test_raises_correct_exception_when_running_error_checks_with_alert_present(self, browser, page):
         from selenium.common.exceptions import UnexpectedAlertPresentException
         with pytest.raises(UnexpectedAlertPresentException):
@@ -191,6 +194,8 @@ class TestAfterHooksRun(object):
             browser.alert.ok()
             self.cleanup(browser, hook)
 
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnexpectedAlertPresentException)
     def test_does_not_raise_error_if_no_error_checks_are_defined_with_alert_present(self, browser, page):
         def hook(b):
             b.url
